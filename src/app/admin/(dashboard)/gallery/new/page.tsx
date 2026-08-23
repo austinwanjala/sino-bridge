@@ -1,0 +1,109 @@
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import { revalidatePath } from 'next/cache'
+
+export default function NewGalleryImage() {
+  async function createImage(formData: FormData) {
+    'use server'
+    const sb = await createClient()
+
+    let final_image_url = formData.get('image_url') as string;
+    const image_file = formData.get('image_file') as File | null;
+    
+    console.log('--- Form Submission ---');
+    console.log('Has image_file?', !!image_file);
+    console.log('image_file size:', image_file ? image_file.size : 0);
+    console.log('image_url:', final_image_url);
+
+    if (image_file && image_file.size > 0) {
+      const fileName = `${Date.now()}-${image_file.name}`;
+      console.log('Uploading file:', fileName, 'Size:', image_file.size, 'Type:', image_file.type);
+      
+      const buffer = Buffer.from(await image_file.arrayBuffer());
+      const { data, error } = await sb.storage.from('gallery').upload(`public/${fileName}`, buffer, {
+        contentType: image_file.type
+      });
+      if (error) {
+        console.error('Storage Upload Error:', error);
+      }
+      if (data) {
+        const { data: urlData } = sb.storage.from('gallery').getPublicUrl(data.path);
+        final_image_url = urlData.publicUrl;
+        console.log('Upload successful, URL:', final_image_url);
+      }
+    }
+
+    const newImage = {
+      title: formData.get('title'),
+      image_url: final_image_url,
+      description: formData.get('description'),
+      display_order: parseInt(formData.get('display_order') as string) || 0,
+      is_published: formData.get('is_active') === 'on',
+    }
+
+    const { error: insertError } = await sb.from('gallery_images').insert(newImage)
+    if (insertError) {
+      console.error('Database Insert Error:', insertError);
+    }
+
+    revalidatePath('/admin/gallery')
+    revalidatePath('/gallery')
+    redirect('/admin/gallery')
+  }
+
+  return (
+    <div className="space-y-6 max-w-3xl">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Add Gallery Image</h1>
+        <p className="text-sm text-gray-500 mt-1">Add a new photo to the public gallery.</p>
+      </div>
+
+      <form action={createImage} className="bg-white shadow rounded-lg p-6 space-y-4">
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Upload Image File</label>
+          <input type="file" name="image_file" accept="image/*" className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md" />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">OR Image URL</label>
+          <input type="url" name="image_url" placeholder="https://..." className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md" />
+          <p className="text-xs text-gray-500 mt-1">Direct link to the image if not uploading.</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Title / Caption</label>
+            <input type="text" name="title" placeholder="e.g. Calligraphy Workshop" className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Description / Category</label>
+            <input type="text" name="description" placeholder="e.g. Events, Campus, Students" className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md" />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Display Order</label>
+          <input type="number" name="display_order" defaultValue={0} className="mt-1 block w-full px-3 py-2 bg-white text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md" />
+        </div>
+
+        <div className="flex items-center pt-2">
+          <input type="checkbox" name="is_active" id="is_active" defaultChecked className="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500" />
+          <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
+            Visible on public website
+          </label>
+        </div>
+
+        <div className="pt-4 flex items-center justify-end space-x-3 border-t">
+          <Link href="/admin/gallery" className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            Cancel
+          </Link>
+          <button type="submit" className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-700 hover:bg-red-800">
+            Save Image
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
