@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
@@ -15,7 +16,9 @@ import {
   MessageSquare,
   Mail,
   LogOut,
-  Navigation
+  Navigation,
+  Menu,
+  X
 } from 'lucide-react'
 import { logout } from '@/app/admin/login/actions'
 
@@ -52,15 +55,53 @@ const menuGroups = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false)
+
+  // Close sidebar on route change on mobile
+  useEffect(() => {
+    setIsOpen(false)
+  }, [pathname])
 
   return (
-    <div className="w-64 bg-gray-900 text-white min-h-screen flex flex-col">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-red-500">SinoBridge</h1>
-        <p className="text-xs text-gray-400 mt-1">Admin CMS</p>
+    <>
+      {/* Mobile Top Bar */}
+      <div className="md:hidden flex items-center justify-between bg-gray-900 text-white p-4 shadow-md z-30">
+        <div className="flex items-center">
+          <h1 className="text-xl font-bold text-red-500 mr-2">SinoBridge</h1>
+          <span className="text-xs text-gray-400">Admin CMS</span>
+        </div>
+        <button 
+          onClick={() => setIsOpen(true)}
+          className="p-2 -mr-2 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white focus:outline-none"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
       </div>
 
-      <nav className="flex-1 px-4 space-y-6 overflow-y-auto">
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity" 
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Content */}
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-red-500">SinoBridge</h1>
+            <p className="text-xs text-gray-400 mt-1">Admin CMS</p>
+          </div>
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="md:hidden p-2 -mr-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        <nav className="flex-1 px-4 space-y-6 overflow-y-auto custom-scrollbar">
         <div>
           <Link 
             href="/admin" 
@@ -111,6 +152,7 @@ export default function Sidebar() {
           </button>
         </form>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
