@@ -61,6 +61,9 @@ export default async function TimetableCMS() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex items-center justify-end space-x-2">
+                    <Link href={`/admin/timetable/${t.id}/edit`} className="text-indigo-600 hover:text-indigo-900" title="Edit">
+                      <Edit className="h-5 w-5" />
+                    </Link>
                     <form action={deleteTimetable}>
                       <input type="hidden" name="id" value={t.id} />
                       <button type="submit" className="text-red-600 hover:text-red-900" title="Delete">

@@ -30,18 +30,18 @@ export default async function TestimonialsPage() {
                   <Star key={i} className={`h-5 w-5 ${i < (t.rating || 5) ? 'fill-current' : 'text-gray-200'}`} />
                 ))}
               </div>
-              <p className="text-gray-700 italic flex-1 leading-relaxed">"{t.content}"</p>
+              <p className="text-gray-700 italic flex-1 leading-relaxed">"{t.message}"</p>
               <div className="mt-8 flex items-center">
-                {t.image_url ? (
-                  <img src={t.image_url} alt={t.student_name} className="h-12 w-12 rounded-full object-cover mr-4 border-2 border-red-100" />
+                {t.photo_url ? (
+                  <img src={t.photo_url} alt={t.name} className="h-12 w-12 rounded-full object-cover mr-4 border-2 border-red-100" />
                 ) : (
                   <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center text-red-700 font-bold mr-4">
-                    {t.student_name.charAt(0)}
+                    {t.name.charAt(0)}
                   </div>
                 )}
                 <div>
-                  <h4 className="font-bold text-gray-900">{t.student_name}</h4>
-                  {t.program_taken && <p className="text-sm text-red-600 font-medium">{t.program_taken}</p>}
+                  <h4 className="font-bold text-gray-900">{t.name}</h4>
+                  {t.program && <p className="text-sm text-red-600 font-medium">{t.program}</p>}
                 </div>
               </div>
             </div>

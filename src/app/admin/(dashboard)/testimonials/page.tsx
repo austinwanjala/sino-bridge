@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Edit, Trash2 } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 
 export default async function TestimonialsCMS() {
@@ -51,21 +51,21 @@ export default async function TestimonialsCMS() {
               <tr key={t.id}>
                 <td className="px-6 py-4 whitespace-nowrap flex items-center">
                   <div className="h-10 w-10 flex-shrink-0">
-                    {t.image_url ? (
-                      <img className="h-10 w-10 rounded-full object-cover" src={t.image_url} alt="" />
+                    {t.photo_url ? (
+                      <img className="h-10 w-10 rounded-full object-cover" src={t.photo_url} alt="" />
                     ) : (
                       <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                        {t.student_name.charAt(0)}
+                        {t.name.charAt(0)}
                       </div>
                     )}
                   </div>
                   <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-900">{t.student_name}</div>
-                    <div className="text-xs text-gray-500">{t.program_taken || '-'}</div>
+                    <div className="text-sm font-medium text-gray-900">{t.name}</div>
+                    <div className="text-xs text-gray-500">{t.program || '-'}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm text-gray-500 line-clamp-2">{t.content}</div>
+                  <div className="text-sm text-gray-500 line-clamp-2">{t.message}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${t.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
@@ -74,6 +74,9 @@ export default async function TestimonialsCMS() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex items-center justify-end space-x-2">
+                    <Link href={`/admin/testimonials/${t.id}/edit`} className="text-indigo-600 hover:text-indigo-900" title="Edit">
+                      <Edit className="h-5 w-5" />
+                    </Link>
                     <form action={deleteTestimonial}>
                       <input type="hidden" name="id" value={t.id} />
                       <button type="submit" className="text-red-600 hover:text-red-900" title="Delete">

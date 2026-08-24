@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Edit, Trash2 } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 
 export default async function GalleryCMS() {
@@ -46,7 +46,10 @@ export default async function GalleryCMS() {
               <h3 className="text-sm font-medium text-gray-900 truncate">{item.title || 'Untitled'}</h3>
               <p className="text-xs text-gray-500 truncate">{item.description || 'General'}</p>
             </div>
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex space-x-2">
+              <Link href={`/admin/gallery/${item.id}/edit`} className="bg-white p-2 rounded-full shadow text-indigo-600 hover:text-indigo-900" title="Edit">
+                <Edit className="h-4 w-4" />
+              </Link>
               <form action={deleteImage}>
                 <input type="hidden" name="id" value={item.id} />
                 <button type="submit" className="bg-white p-2 rounded-full shadow text-red-600 hover:text-red-900" title="Delete">
