@@ -44,18 +44,36 @@ export default async function HomepageCMS() {
   async function saveHeroContent(formData: FormData) {
     'use server'
     const sb = await createClient()
+    
     const content = {
       heading: formData.get('heading'),
       description: formData.get('description'),
-      image_url: formData.get('image_url'),
+      image_url: formData.get('image_url') as string,
       primary_btn_text: formData.get('primary_btn_text'),
       primary_btn_link: formData.get('primary_btn_link'),
       secondary_btn_text: formData.get('secondary_btn_text'),
       secondary_btn_link: formData.get('secondary_btn_link'),
     }
 
-    await sb.from('homepage_sections').upsert({ section_type: 'hero', is_visible: true, display_order: 1 })
-    await sb.from('homepage_content').upsert({ section_type: 'hero', content: content }, { onConflict: 'section_type' })
+    // Safely update or insert homepage_sections
+    const { data: existingSection } = await sb.from('homepage_sections').select('id').eq('section_type', 'hero').maybeSingle();
+    if (existingSection) {
+      const { error: err1 } = await sb.from('homepage_sections').update({ is_visible: true, display_order: 1 }).eq('section_type', 'hero');
+      if (err1) console.error("Error updating homepage_sections:", err1);
+    } else {
+      const { error: err1 } = await sb.from('homepage_sections').insert({ section_type: 'hero', is_visible: true, display_order: 1 });
+      if (err1) console.error("Error inserting homepage_sections:", err1);
+    }
+
+    // Safely update or insert homepage_content
+    const { data: existingContent } = await sb.from('homepage_content').select('id').eq('section_type', 'hero').maybeSingle();
+    if (existingContent) {
+      const { error: err2 } = await sb.from('homepage_content').update({ content: content }).eq('section_type', 'hero');
+      if (err2) console.error("Error updating homepage_content:", err2);
+    } else {
+      const { error: err2 } = await sb.from('homepage_content').insert({ section_type: 'hero', content: content });
+      if (err2) console.error("Error inserting homepage_content:", err2);
+    }
 
     revalidatePath('/') 
     revalidatePath('/admin/homepage')

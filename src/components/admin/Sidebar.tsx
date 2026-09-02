@@ -67,7 +67,7 @@ export default function Sidebar() {
       {/* Mobile Top Bar */}
       <div className="md:hidden flex items-center justify-between bg-gray-900 text-white p-4 shadow-md z-30">
         <div className="flex items-center">
-          <h1 className="text-xl font-bold text-red-500 mr-2">SinoBridge</h1>
+          <img src="/logo.png" alt="SinoBridge Logo" className="h-8 w-auto mr-2" />
           <span className="text-xs text-gray-400">Admin CMS</span>
         </div>
         <button 
@@ -90,8 +90,8 @@ export default function Sidebar() {
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-red-500">SinoBridge</h1>
-            <p className="text-xs text-gray-400 mt-1">Admin CMS</p>
+            <img src="/logo.png" alt="SinoBridge Logo" className="h-10 w-auto" />
+            <p className="text-xs text-gray-400 mt-2">Admin CMS</p>
           </div>
           <button 
             onClick={() => setIsOpen(false)}

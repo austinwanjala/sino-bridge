@@ -15,6 +15,24 @@ export default async function GalleryCMS() {
     'use server'
     const id = formData.get('id') as string
     const sb = await createClient()
+
+    // Fetch the image URL before deleting
+    const { data: item } = await sb.from('gallery_images').select('image_url').eq('id', id).single();
+
+    if (item && item.image_url) {
+      try {
+        const urlObj = new URL(item.image_url);
+        // Assuming URL format: https://[project].supabase.co/storage/v1/object/public/gallery/path/to/file.ext
+        const match = urlObj.pathname.match(/\/storage\/v1\/object\/public\/gallery\/(.+)$/);
+        if (match && match[1]) {
+          const filePath = decodeURIComponent(match[1]);
+          await sb.storage.from('gallery').remove([filePath]);
+        }
+      } catch (e) {
+        console.error("Error deleting file from storage:", e);
+      }
+    }
+
     await sb.from('gallery_images').delete().eq('id', id)
     revalidatePath('/admin/gallery')
     revalidatePath('/gallery')

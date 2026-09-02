@@ -26,18 +26,19 @@ export default function Navbar() {
         <div className="flex justify-between h-20 items-center">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="text-2xl font-bold text-red-700 tracking-tight">
-              SinoBridge <span className="text-gray-900 font-medium">Chinese School</span>
+            <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-red-700 tracking-tight">
+              <img src="/logo.png" alt="SinoBridge Logo" className="h-10 w-auto" />
+              <span>SinoBridge <span className="text-gray-900 font-medium hidden sm:inline">Chinese School</span></span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-1">
+          <nav className="hidden lg:flex space-x-0 xl:space-x-1">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-gray-600 hover:text-red-700 font-medium px-3 py-2 rounded-md transition-colors text-sm"
+                className="text-gray-600 hover:text-red-700 font-medium px-2 py-2 rounded-md transition-colors text-sm whitespace-nowrap"
               >
                 {link.name}
               </Link>
@@ -45,17 +46,17 @@ export default function Navbar() {
           </nav>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden lg:flex items-center ml-2">
             <Link
               href="/register"
-              className="bg-red-700 text-white hover:bg-red-800 px-5 py-2.5 rounded-md text-sm font-medium transition-colors shadow-sm"
+              className="bg-red-700 text-white hover:bg-red-800 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
             >
               Register Now
             </Link>
           </div>
 
           {/* Mobile menu button */}
-          <div className="flex md:hidden items-center">
+          <div className="flex lg:hidden items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500 p-2"
