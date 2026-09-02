@@ -95,8 +95,21 @@ export default async function HomepageCMS() {
       f3_desc: formData.get('f3_desc'),
     }
 
-    await sb.from('homepage_sections').upsert({ section_type: 'features', is_visible: true, display_order: 2 })
-    await sb.from('homepage_content').upsert({ section_type: 'features', content: content }, { onConflict: 'section_type' })
+    // Safely update or insert homepage_sections
+    const { data: existingSection } = await sb.from('homepage_sections').select('id').eq('section_type', 'features').maybeSingle();
+    if (existingSection) {
+      await sb.from('homepage_sections').update({ is_visible: true, display_order: 2 }).eq('section_type', 'features');
+    } else {
+      await sb.from('homepage_sections').insert({ section_type: 'features', is_visible: true, display_order: 2 });
+    }
+
+    // Safely update or insert homepage_content
+    const { data: existingContent } = await sb.from('homepage_content').select('id').eq('section_type', 'features').maybeSingle();
+    if (existingContent) {
+      await sb.from('homepage_content').update({ content: content }).eq('section_type', 'features');
+    } else {
+      await sb.from('homepage_content').insert({ section_type: 'features', content: content });
+    }
 
     revalidatePath('/') 
     revalidatePath('/admin/homepage')
@@ -113,8 +126,21 @@ export default async function HomepageCMS() {
       btn_link: formData.get('btn_link'),
     }
 
-    await sb.from('homepage_sections').upsert({ section_type: 'cta', is_visible: true, display_order: 3 })
-    await sb.from('homepage_content').upsert({ section_type: 'cta', content: content }, { onConflict: 'section_type' })
+    // Safely update or insert homepage_sections
+    const { data: existingSection } = await sb.from('homepage_sections').select('id').eq('section_type', 'cta').maybeSingle();
+    if (existingSection) {
+      await sb.from('homepage_sections').update({ is_visible: true, display_order: 3 }).eq('section_type', 'cta');
+    } else {
+      await sb.from('homepage_sections').insert({ section_type: 'cta', is_visible: true, display_order: 3 });
+    }
+
+    // Safely update or insert homepage_content
+    const { data: existingContent } = await sb.from('homepage_content').select('id').eq('section_type', 'cta').maybeSingle();
+    if (existingContent) {
+      await sb.from('homepage_content').update({ content: content }).eq('section_type', 'cta');
+    } else {
+      await sb.from('homepage_content').insert({ section_type: 'cta', content: content });
+    }
 
     revalidatePath('/') 
     revalidatePath('/admin/homepage')

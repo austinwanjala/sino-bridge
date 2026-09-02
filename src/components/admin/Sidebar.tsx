@@ -53,7 +53,13 @@ const menuGroups = [
   }
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ 
+  unreadRegistrations = 0, 
+  unreadContacts = 0 
+}: { 
+  unreadRegistrations?: number, 
+  unreadContacts?: number 
+}) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -61,6 +67,12 @@ export default function Sidebar() {
   useEffect(() => {
     setIsOpen(false)
   }, [pathname])
+
+  const getBadgeCount = (name: string) => {
+    if (name === 'Registration Requests') return unreadRegistrations;
+    if (name === 'Contact Messages') return unreadContacts;
+    return 0;
+  }
 
   return (
     <>
@@ -74,7 +86,12 @@ export default function Sidebar() {
           onClick={() => setIsOpen(true)}
           className="p-2 -mr-2 rounded-md hover:bg-gray-800 text-gray-300 hover:text-white focus:outline-none"
         >
-          <Menu className="h-6 w-6" />
+          <div className="relative">
+            <Menu className="h-6 w-6" />
+            {(unreadRegistrations + unreadContacts) > 0 && (
+              <span className="absolute -top-1 -right-1 block h-3 w-3 rounded-full bg-red-500 ring-2 ring-gray-900" />
+            )}
+          </div>
         </button>
       </div>
 
@@ -120,18 +137,27 @@ export default function Sidebar() {
             <div className="space-y-1">
               {group.items.map((item) => {
                 const isActive = pathname.startsWith(item.href)
+                const badgeCount = getBadgeCount(item.name)
+                
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                    className={`flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md ${
                       isActive
                         ? 'bg-red-900/50 text-red-100'
                         : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     }`}
                   >
-                    <item.icon className={`mr-3 h-5 w-5 ${isActive ? 'text-red-300' : 'text-gray-400'}`} />
-                    {item.name}
+                    <div className="flex items-center">
+                      <item.icon className={`mr-3 h-5 w-5 ${isActive ? 'text-red-300' : 'text-gray-400'}`} />
+                      {item.name}
+                    </div>
+                    {badgeCount > 0 && (
+                      <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        {badgeCount}
+                      </span>
+                    )}
                   </Link>
                 )
               })}

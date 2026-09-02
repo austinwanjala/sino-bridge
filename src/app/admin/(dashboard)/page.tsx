@@ -25,7 +25,8 @@ export default async function AdminDashboard() {
   const { count: eventsCount } = await supabase.from('events').select('*', { count: 'exact', head: true })
   const { count: galleryCount } = await supabase.from('gallery_images').select('*', { count: 'exact', head: true })
   const { count: newsCount } = await supabase.from('news_posts').select('*', { count: 'exact', head: true })
-  const { count: inquiriesCount } = await supabase.from('registration_requests').select('*', { count: 'exact', head: true }).eq('status', 'new')
+  const { count: registrationCount } = await supabase.from('registration_requests').select('*', { count: 'exact', head: true }).eq('status', 'new')
+  const { count: contactCount } = await supabase.from('contact_messages').select('*', { count: 'exact', head: true }).eq('status', 'new')
 
   return (
     <div className="space-y-6">
@@ -40,7 +41,8 @@ export default async function AdminDashboard() {
         <StatCard title="Upcoming Events" value={eventsCount || 0} icon={Calendar} />
         <StatCard title="Gallery Images" value={galleryCount || 0} icon={ImageIcon} />
         <StatCard title="News Articles" value={newsCount || 0} icon={FileText} />
-        <StatCard title="New Inquiries" value={inquiriesCount || 0} icon={MessageSquare} />
+        <StatCard title="New Registrations" value={registrationCount || 0} icon={MessageSquare} />
+        <StatCard title="New Contacts" value={contactCount || 0} icon={MessageSquare} />
       </div>
     </div>
   )
