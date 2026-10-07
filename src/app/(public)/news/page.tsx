@@ -26,12 +26,12 @@ export default async function NewsPage() {
         <div className="max-w-4xl mx-auto space-y-8">
           {articles?.map((article) => (
             <article key={article.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
-              {article.image_url && (
+              {article.featured_image_url && (
                 <div className="md:w-1/3">
-                  <img src={article.image_url} alt={article.title} className="w-full h-48 md:h-full object-cover" />
+                  <img src={article.featured_image_url} alt={article.title} className="w-full h-48 md:h-full object-cover" />
                 </div>
               )}
-              <div className={`p-8 flex flex-col justify-center ${article.image_url ? 'md:w-2/3' : 'w-full'}`}>
+              <div className={`p-8 flex flex-col justify-center ${article.featured_image_url ? 'md:w-2/3' : 'w-full'}`}>
                 <div className="flex items-center text-sm text-gray-500 mb-3">
                   <Calendar className="h-4 w-4 mr-2" />
                   {new Date(article.published_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}

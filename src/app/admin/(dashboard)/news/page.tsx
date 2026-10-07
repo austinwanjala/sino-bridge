@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Edit, Trash2 } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 
 export default async function NewsCMS(props: { searchParams?: Promise<{ success?: string }> }) {
@@ -69,6 +69,9 @@ export default async function NewsCMS(props: { searchParams?: Promise<{ success?
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex items-center justify-end space-x-2">
+                    <Link href={`/admin/news/${article.id}/edit`} className="text-indigo-600 hover:text-indigo-900" title="Edit">
+                      <Edit className="h-5 w-5" />
+                    </Link>
                     <form action={deleteNews}>
                       <input type="hidden" name="id" value={article.id} />
                       <button type="submit" className="text-red-600 hover:text-red-900" title="Delete">
