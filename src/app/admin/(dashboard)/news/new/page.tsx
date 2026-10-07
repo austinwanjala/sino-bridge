@@ -36,11 +36,11 @@ export default function NewNewsArticle() {
       status: formData.get('is_published') === 'on' ? 'published' : 'draft',
     }
 
-    await sb.from('news').insert(newArticle)
+    await sb.from('news_posts').insert(newArticle)
 
     revalidatePath('/admin/news')
     revalidatePath('/news')
-    redirect('/admin/news')
+    redirect('/admin/news?success=created')
   }
 
   return (

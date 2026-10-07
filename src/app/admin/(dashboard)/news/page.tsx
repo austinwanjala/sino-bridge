@@ -3,11 +3,12 @@ import Link from 'next/link'
 import { Plus, Trash2 } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 
-export default async function NewsCMS() {
+export default async function NewsCMS(props: { searchParams?: Promise<{ success?: string }> }) {
+  const searchParams = props.searchParams ? await props.searchParams : undefined;
   const supabase = await createClient()
 
   const { data: articles } = await supabase
-    .from('news')
+    .from('news_posts')
     .select('*')
     .order('published_at', { ascending: false })
 
@@ -15,13 +16,18 @@ export default async function NewsCMS() {
     'use server'
     const id = formData.get('id') as string
     const sb = await createClient()
-    await sb.from('news').delete().eq('id', id)
+    await sb.from('news_posts').delete().eq('id', id)
     revalidatePath('/admin/news')
     revalidatePath('/news')
   }
 
   return (
     <div className="space-y-6">
+      {searchParams?.success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
+          {searchParams.success === 'created' ? 'Article was successfully added.' : 'Article was successfully updated.'}
+        </div>
+      )}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">News & Announcements</h1>
@@ -57,8 +63,8 @@ export default async function NewsCMS() {
                   {new Date(article.published_at).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${article.is_published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                    {article.is_published ? 'Published' : 'Draft'}
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${article.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                    {article.status === 'published' ? 'Published' : 'Draft'}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

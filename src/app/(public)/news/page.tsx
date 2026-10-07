@@ -8,9 +8,9 @@ export default async function NewsPage() {
   const supabase = await createClient()
 
   const { data: articles } = await supabase
-    .from('news')
+    .from('news_posts')
     .select('*')
-    .eq('is_published', true)
+    .eq('status', 'published')
     .order('published_at', { ascending: false })
 
   return (
@@ -38,7 +38,7 @@ export default async function NewsPage() {
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">{article.title}</h2>
                 <p className="text-gray-600 mb-6 line-clamp-3 leading-relaxed">
-                  {article.summary || article.content}
+                  {article.excerpt || article.content}
                 </p>
                 <div className="mt-auto">
                   <Link href={`/news/${article.slug}`} className="text-red-600 font-semibold hover:text-red-800 transition-colors">

@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 export default async function EditNewsArticle(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const supabase = await createClient()
-  const { data: article } = await supabase.from('news').select('*').eq('id', params.id).single()
+  const { data: article } = await supabase.from('news_posts').select('*').eq('id', params.id).single()
 
   if (!article) {
     redirect('/admin/news')
@@ -47,11 +47,11 @@ export default async function EditNewsArticle(props: { params: Promise<{ id: str
       updatedArticle.featured_image_url = final_image_url
     }
 
-    await sb.from('news').update(updatedArticle).eq('id', params.id)
+    await sb.from('news_posts').update(updatedArticle).eq('id', params.id)
 
     revalidatePath('/admin/news')
     revalidatePath('/news')
-    redirect('/admin/news')
+    redirect('/admin/news?success=updated')
   }
 
   return (
